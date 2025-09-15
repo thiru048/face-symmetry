@@ -188,14 +188,24 @@ def calculate_symmetry(image) -> Dict:
         else:
             dominant = "strong"
 
+        # scores = {
+        #     "perfect": 95 if dominant == "perfect" else 0,
+        #     "nearPerfect": 90 if dominant == "nearPerfect" else 0,
+        #     "slight": 70 if dominant == "slight" else 0,
+        #     "moderate": 55 if dominant == "moderate" else 0,
+        #     "significant": 40 if dominant == "significant" else 0,
+        #     "strong": 20 if dominant == "strong" else 0,
+        # }
+
         scores = {
-            "perfect": 95 if dominant == "perfect" else 0,
-            "nearPerfect": 90 if dominant == "nearPerfect" else 0,
-            "slight": 70 if dominant == "slight" else 0,
-            "moderate": 55 if dominant == "moderate" else 0,
-            "significant": 40 if dominant == "significant" else 0,
-            "strong": 20 if dominant == "strong" else 0,
-        }
+    "perfect": overall_score if dominant == "perfect" else 0,
+    "nearPerfect": overall_score if dominant == "nearPerfect" else 0,
+    "slight": overall_score if dominant == "slight" else 0,
+    "moderate": overall_score if dominant == "moderate" else 0,
+    "significant": overall_score if dominant == "significant" else 0,
+    "strong": overall_score if dominant == "strong" else 0,
+}
+
 
         # --- Analysis text ---
         analysis = (
