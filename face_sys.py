@@ -5,8 +5,6 @@ import mediapipe as mp
 from typing import Dict
 from datetime import datetime
 
-<<<<<<< HEAD
-=======
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
 # import cv2
@@ -17,7 +15,6 @@ import io
 
 app = FastAPI()
 
->>>>>>> 4a6492e9cf13d04f871c45a888812a63a8fabeb5
 
 app = FastAPI()
 
@@ -299,9 +296,6 @@ async def get_symmetry(file: UploadFile = File(...)):
 #     },
 #     "analysis": "The face exhibits near-perfect symmetry. The eyes are aligned (score 86.48). The eyebrows are balanced (score 73.02). The nose is midline-aligned (score 96.15). The lips are symmetrical (score 97.22). The jawline and chin are even (score 94.71). The cheek contours are balanced (score 93.69).",
 #     "analysisTime": "2025-09-07T07:23:59.544316Z"
-<<<<<<< HEAD
-# }   
-=======
 # }   
 
 
@@ -390,4 +384,3 @@ async def analyze_face(file: UploadFile = File(...)):
             "status": False,
             "message": f"Error processing image: {str(e)}"
         })
->>>>>>> 4a6492e9cf13d04f871c45a888812a63a8fabeb5
