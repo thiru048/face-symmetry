@@ -5,6 +5,19 @@ import mediapipe as mp
 from typing import Dict
 from datetime import datetime
 
+<<<<<<< HEAD
+=======
+from fastapi import FastAPI, File, UploadFile
+from fastapi.responses import JSONResponse
+# import cv2
+# import numpy as np
+# import mediapipe as mp
+import math
+import io
+
+app = FastAPI()
+
+>>>>>>> 4a6492e9cf13d04f871c45a888812a63a8fabeb5
 
 app = FastAPI()
 
@@ -286,4 +299,95 @@ async def get_symmetry(file: UploadFile = File(...)):
 #     },
 #     "analysis": "The face exhibits near-perfect symmetry. The eyes are aligned (score 86.48). The eyebrows are balanced (score 73.02). The nose is midline-aligned (score 96.15). The lips are symmetrical (score 97.22). The jawline and chin are even (score 94.71). The cheek contours are balanced (score 93.69).",
 #     "analysisTime": "2025-09-07T07:23:59.544316Z"
+<<<<<<< HEAD
 # }   
+=======
+# }   
+
+
+
+mp_face_mesh = mp.solutions.face_mesh
+mp_drawing = mp.solutions.drawing_utils
+
+# Function to calculate Euclidean distance
+def distance(p1, p2):
+    return math.dist(p1, p2)
+
+# Function to calculate golden ratio % match
+def calculate_golden_ratio(landmarks, img_w, img_h):
+    # Convert relative landmarks to pixel coords
+    pts = [(int(l.x * img_w), int(l.y * img_h)) for l in landmarks]
+
+    # Example golden ratio checks (can extend with more rules)
+    # 1. Face length / Face width
+    top_head = pts[10]   # forehead
+    chin = pts[152]      # chin
+    left_cheek = pts[234]
+    right_cheek = pts[454]
+
+    face_length = distance(top_head, chin)
+    face_width = distance(left_cheek, right_cheek)
+    ratio1 = face_length / face_width if face_width != 0 else 0
+
+    # 2. Eye to lip vs chin distance
+    left_eye = pts[33]
+    right_eye = pts[263]
+    mid_eye = ((left_eye[0] + right_eye[0]) // 2, (left_eye[1] + right_eye[1]) // 2)
+    upper_lip = pts[13]
+
+    eye_lip = distance(mid_eye, upper_lip)
+    lip_chin = distance(upper_lip, chin)
+    ratio2 = lip_chin / eye_lip if eye_lip != 0 else 0
+
+    # Compare with golden ratio
+    golden = 1.618
+    score1 = (1 - abs(ratio1 - golden) / golden) * 100
+    score2 = (1 - abs(ratio2 - golden) / golden) * 100
+
+    return {
+        "face_length_width_ratio": round(ratio1, 3),
+        "eye_lip_chin_ratio": round(ratio2, 3),
+        "golden_ratio_match_percentage": round((score1 + score2) / 2, 2)
+    }
+
+@app.post("/analyze-face/")
+async def analyze_face(file: UploadFile = File(...)):
+    try:
+        # Read image
+        image_data = await file.read()
+        nparr = np.frombuffer(image_data, np.uint8)
+        img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        img_h, img_w, _ = img.shape
+
+        # Detect face landmarks
+        with mp_face_mesh.FaceMesh(
+            static_image_mode=True,
+            max_num_faces=1,
+            refine_landmarks=True,
+            min_detection_confidence=0.5
+        ) as face_mesh:
+
+            results = face_mesh.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
+            if not results.multi_face_landmarks:
+                return JSONResponse({
+                    "status": False,
+                    "message": "Not proper face image"
+                })
+
+            landmarks = results.multi_face_landmarks[0].landmark
+            analysis = calculate_golden_ratio(landmarks, img_w, img_h)
+
+            return JSONResponse({
+                "status": True,
+                "message": "Face analyzed successfully",
+                "data": analysis
+            })
+
+    except Exception as e:
+        return JSONResponse({
+            "status": False,
+            "message": f"Error processing image: {str(e)}"
+        })
+>>>>>>> 4a6492e9cf13d04f871c45a888812a63a8fabeb5
